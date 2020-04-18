@@ -25,12 +25,21 @@ if __name__ == "__main__":
     print('Активных пропусков:', len(active_passcards))
 
     not_leaved_visits = Visit.objects.filter(leaved_at=None)
-    print(not_leaved_visits)
 
-    now_time = timezone.localtime(timezone.now())
     for not_leaved_visit in not_leaved_visits:
         visit_entered_at_local_time = timezone.localtime(not_leaved_visit.entered_at)
-        time_in_storage = now_time - visit_entered_at_local_time
-        formated_time_in_storage = str(time_in_storage).split('.')[0]
         print(not_leaved_visit.passcard.owner_name)
-        print('Зашёл в хранилище, время по Москве:\n{}\n\nНаходится в хранилище:\n{}'.format(visit_entered_at_local_time, formated_time_in_storage))
+        print('Зашёл в хранилище, время по Москве:\n{}\nНаходится в хранилище:\n{}\n\n'.format(visit_entered_at_local_time, not_leaved_visit.format_duration()))
+
+    passcard = Passcard.objects.all()[0]
+    all_passcard_visits = Visit.objects.filter(passcard=passcard)
+    # print(passcard)
+    # print(all_passcard_visits)
+    # print(len(all_passcard_visits))
+    print(all_passcard_visits[0])
+    print(all_passcard_visits[0].is_visit_long(minutes=20))
+    strange_visits = []
+    for visit in Visit.objects.all():
+        if visit.is_visit_long():
+            strange_visits.append(visit)
+    print(len(strange_visits))
